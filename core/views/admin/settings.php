@@ -97,6 +97,18 @@ $(function() {
 
 <li class='sep'></li>
 
+<li>
+<label><?php echo T("Global notifications"); ?></label>
+<div class='subText'><?php echo T("Members who have asked to be emailed when someone posts in a thread they have followed:"); ?></div>
+<div class='checkboxGroup'>
+<label class='radio'><?php echo $form->radio("emailNotifyEveryReply", 0); ?> <?php echo T("Are emailed on the first unread reply only"); ?></label>
+<label class='radio'><?php echo $form->radio("emailNotifyEveryReply", 1); ?> <?php echo T("Are emailed on every reply"); ?></label>
+</div>
+</li>
+
+<li class='sep'></li>
+
+
 <li><?php echo $form->saveButton(); ?></li>
 
 </ul>

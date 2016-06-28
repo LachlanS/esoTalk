@@ -772,6 +772,23 @@ public function addReply(&$conversation, $content)
 		ET::activityModel()->create("post", $member, ET::$session->user, $data, $emailData);
 	}
 
+	/* If the setting is enabled, not only notify the members who have no unread posts, but make sure
+	   the members who DO have unread posts get an email too */
+	if (C("esoTalk.emailNotifyEveryReply", "0") == "1")
+	{
+		// Get a list of members like the above, but who have unread posts	
+		$sql = ET::SQL()
+        	        ->from("member_conversation s", "s.conversationId=:conversationId AND s.type='member' AND s.id=m.memberId AND s.starred=1 AND s.lastRead<:posts AND s.id!=:userId", "inner")
+        	      	->bind(":conversationId", $conversation["conversationId"])
+                	->bind(":posts", $conversation["countPosts"] - 1)
+                	->bind(":userId", ET::$session->userId);
+        	$members2 = ET::memberModel()->getWithSQL($sql);
+
+	        foreach ($members2 as $member) {
+        	        ET::activityModel()->create("repost", $member, ET::$session->user, $data, $emailData);
+        	} 
+	}
+
 	// If this is the first reply (ie. the conversation was a draft and now it isn't), send notifications to
 	// members who are in the membersAllowed list.
 	if ($conversation["countPosts"] == 1 and !empty($conversation["membersAllowed"])) {

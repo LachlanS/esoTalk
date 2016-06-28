@@ -39,6 +39,7 @@ public function action_index()
 	$form->setValue("memberListVisibleToGuests", C("esoTalk.members.visibleToGuests"));
 	$form->setValue("registrationOpen", C("esoTalk.registration.open"));
 	$form->setValue("requireConfirmation", C("esoTalk.registration.requireConfirmation"));
+	$form->setValue("emailNotifyEveryReply", C("esoTalk.emailNotifyEveryReply"));
 
 	$c = C("esoTalk.conversation.editPostTimeLimit");
 	if ($c === -1) $form->setValue("editPostMode", "forever");
@@ -70,6 +71,7 @@ public function action_index()
 			"esoTalk.members.visibleToGuests" => $form->getValue("forumVisibleToGuests") and $form->getValue("memberListVisibleToGuests"),
 			"esoTalk.registration.open" => $form->getValue("registrationOpen"),
 			"esoTalk.registration.requireConfirmation" => in_array($v = $form->getValue("requireConfirmation"), array(false, "email", "approval")) ? $v : false,
+			"esoTalk.emailNotifyEveryReply" => $form->getValue("emailNotifyEveryReply"),
 		);
 
 		switch ($form->getValue("editPostMode")) {
