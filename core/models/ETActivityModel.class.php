@@ -128,6 +128,13 @@ public function create($type, $member, $fromMember = null, $data = null, $emailD
 	$activity["fromMemberName"] = $fromMember ? $fromMember["username"] : null;
 	$activity["activityId"] = $activityId;
 
+	// Hack: there is no user preference "email.repost" - if the user has email.post == true, they automatically get repost as well
+	// Treat "repost" activity type as a "post" activity type for the purposes of the email section below
+	if ($type == "repost")
+	{
+		$type = "post";
+	}
+
 	// If this activity type has an email projection, the member wants to receive an email notification
 	// for this type, and we haven't set sent them one in a previous call of this method, then let's send one!
 	if (!empty($projections[self::PROJECTION_EMAIL]) and !empty($member["preferences"]["email.$type"]) and !in_array($member["memberId"], $this->membersUsed)) {
@@ -590,4 +597,9 @@ ETActivityModel::addType("updateAvailable", array(
 // Notification for when a new user signs up and needs approval.
 ETActivityModel::addType("unapproved", array(
 	"notification" => array("ETActivityModel", "unapprovedNotification")
+));
+
+// Notification for when a member has two or more unread posts in a starred conversation (like "post" but only sends an email)
+ETActivityModel::addType("repost", array(
+        "email" => array("ETActivityModel", "postEmail")
 ));
